@@ -76,6 +76,12 @@ void	err(char *err_text, t_pipex *px, int errnum)
 		close(px->fd.in);
 	if (px->fd.out != -1)
 		close(px->fd.out);
+	if (px->fd.pipe[0] != -1)
+		close(px->fd.pipe[0]);
+	if (px->fd.pipe[1] != -1)
+		close(px->fd.pipe[1]);
+	if (px->fd.prev_read != -1)
+		close(px->fd.prev_read);
 	free_pipex(px);
 	if (errnum == ENOENT)
 		exit (127);
