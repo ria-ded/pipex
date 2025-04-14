@@ -6,7 +6,7 @@
 /*   By: mdziadko <mdziadko@student.42warsaw.pl>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/06 15:31:51 by mdziadko          #+#    #+#             */
-/*   Updated: 2025/04/09 15:31:24 by mdziadko         ###   ########.fr       */
+/*   Updated: 2025/04/14 10:47:50 by mdziadko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,9 +69,18 @@ void	free_arr(char **arr)
 	free(arr);
 }
 
-void	err(char *err_text, t_pipex *px)
+void	err(char *err_text, t_pipex *px, int errnum)
 {
 	perror(err_text);
+	if (px->fd.in != -1)
+		close(px->fd.in);
+	if (px->fd.out != -1)
+		close(px->fd.out);
 	free_pipex(px);
-	exit (1);
+	if (errnum == ENOENT)
+		exit (127);
+	else if (errnum == EACCES)
+		exit (126);
+	else
+		exit (1);
 }
