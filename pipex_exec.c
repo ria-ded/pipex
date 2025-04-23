@@ -30,6 +30,8 @@ void	run_fst_cmd(t_pipex *px, int i)
 		safe_close(&px->fd.in);
 		safe_close(&px->fd.pipe[0]);
 		safe_close(&px->fd.pipe[1]);
+		if (!px->cmds[i]->path)
+			err(px->cmds[i]->args[0], px, errno);
 		if (execve(px->cmds[i]->path, px->cmds[i]->args, px->envp) == -1)
 			err(*px->cmds[i]->args, px, errno);
 	}
@@ -59,6 +61,8 @@ void	run_mid_cmd(t_pipex *px, int i)
 		safe_close(&px->fd.prev_read);
 		safe_close(&px->fd.pipe[0]);
 		safe_close(&px->fd.pipe[1]);
+		if (!px->cmds[i]->path)
+			err(px->cmds[i]->args[0], px, errno);
 		if (execve(px->cmds[i]->path, px->cmds[i]->args, px->envp) == -1)
 			err(*px->cmds[i]->args, px, errno);
 	}
@@ -80,12 +84,16 @@ void	run_last_cmd(t_pipex *px, int i)
 	px->last_pid = pid;
 	if (pid == 0)
 	{
-		if (dup2(px->fd.prev_read, STDIN_FILENO) == -1)
-			err("inflow redirection", px, errno);
-		if (dup2(px->fd.out, STDOUT_FILENO) == -1)
-			err("outlow redirection", px, errno);
+		dup2(px->fd.prev_read, STDIN_FILENO);
+		// if (dup2(px->fd.prev_read, STDIN_FILENO) == -1)
+		// 	err("inflow redirection", px, errno);
+		dup2(px->fd.out, STDOUT_FILENO);
+		// if (dup2(px->fd.out, STDOUT_FILENO) == -1)
+		// 	err("outlow redirection", px, errno);
 		safe_close(&px->fd.prev_read);
 		safe_close(&px->fd.out);
+		if (!px->cmds[i]->path)
+			err(px->cmds[i]->args[0], px, ENOENT);
 		if (execve(px->cmds[i]->path, px->cmds[i]->args, px->envp) == -1)
 			err(*px->cmds[i]->args, px, errno);
 	}
@@ -114,7 +122,10 @@ int	execute_pipex(t_pipex *px)
 {
 	px->fd.in = open(px->infile, O_RDONLY);
 	if (px->fd.in == -1)
+	{
 		perror(px->infile);
+		px->fd.in = open("/dev/null", O_RDONLY);
+	}
 	px->fd.out = open(px->outfile, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (px->fd.out == -1)
 		err(px->outfile, px, 1);
