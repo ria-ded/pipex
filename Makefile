@@ -34,7 +34,7 @@ LIBS		= -L$(PRINTF_DIR) -lftprintf -L$(LIBFT_DIR) -lft
 # 									FILES									   #
 # **************************************************************************** #
 
-SRCS		= pipex.c pipex_exec.c pipex_parse.c pipex_cleanup.c pipex_utils.c
+SRCS		= pipex.c pipex_exec.c pipex_parse.c pipex_cleanup.c pipex_help.c
 OBJS		= $(SRCS:.c=.o)
 HEADERS		= pipex.h
 
