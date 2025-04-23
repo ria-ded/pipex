@@ -6,7 +6,7 @@
 /*   By: mdziadko <mdziadko@student.42warsaw.pl>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/26 17:43:53 by mdziadko          #+#    #+#             */
-/*   Updated: 2025/04/14 17:00:00 by mdziadko         ###   ########.fr       */
+/*   Updated: 2025/04/17 16:34:37 by mdziadko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,10 +18,10 @@ int	main(int argc, char **argv, char **envp)
 	int		exit_code;
 
 	if (argc < 5)
-		return (0);
-	px = parse_args(argc, argv, envp);
+		return (EXIT_FAILURE);
+	px = pipex_init(argc, argv, envp);
 	if (!px)
-		return (1);
+		return (EXIT_FAILURE);
 	exit_code = execute_pipex(px);
 	free_pipex(px);
 	return (exit_code);

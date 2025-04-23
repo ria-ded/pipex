@@ -6,7 +6,7 @@
 #    By: mdziadko <mdziadko@student.42warsaw.pl>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/04/06 12:31:33 by mdziadko          #+#    #+#              #
-#    Updated: 2025/04/14 17:03:11 by mdziadko         ###   ########.fr        #
+#    Updated: 2025/04/17 16:33:40 by mdziadko         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -34,7 +34,7 @@ LIBS		= -L$(PRINTF_DIR) -lftprintf -L$(LIBFT_DIR) -lft
 # 									FILES									   #
 # **************************************************************************** #
 
-SRCS		= pipex.c pipex_exec.c pipex_parse.c pipex_cleanup.c pipex_help.c
+SRCS		= pipex.c pipex_exec.c pipex_parse.c pipex_cleanup.c pipex_utils.c
 OBJS		= $(SRCS:.c=.o)
 HEADERS		= pipex.h
 

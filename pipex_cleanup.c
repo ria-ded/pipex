@@ -6,7 +6,7 @@
 /*   By: mdziadko <mdziadko@student.42warsaw.pl>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/06 15:31:51 by mdziadko          #+#    #+#             */
-/*   Updated: 2025/04/14 10:47:50 by mdziadko         ###   ########.fr       */
+/*   Updated: 2025/04/18 11:36:57 by mdziadko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,17 +40,10 @@ void	free_cmd(t_cmd *cmd)
 
 void	free_pipex(t_pipex *px)
 {
-	int	i;
-
 	if (!px)
 		return ;
-	i = 0;
-	while (i < px->cmds_count)
-	{
-		free_cmd(px->cmds[i]);
-		i++;
-	}
-	free(px->cmds);
+	if (px->cmds)
+		free_cmds(px->cmds);
 	free(px);
 }
 
@@ -71,19 +64,21 @@ void	free_arr(char **arr)
 
 void	err(char *err_text, t_pipex *px, int errnum)
 {
-	perror(err_text);
-	if (px->fd.in != -1)
-		close(px->fd.in);
-	if (px->fd.out != -1)
-		close(px->fd.out);
-	if (px->fd.pipe[0] != -1)
-		close(px->fd.pipe[0]);
-	if (px->fd.pipe[1] != -1)
-		close(px->fd.pipe[1]);
-	if (px->fd.prev_read != -1)
-		close(px->fd.prev_read);
+	if (errnum == EFAULT || errnum == ENOENT)
+	{
+		write(2, "Command not found: ", 19);
+		write(2, err_text, ft_strlen(err_text));
+		write(2, "\n", 1);
+	}
+	else
+		perror(err_text);
+	safe_close(&px->fd.in);
+	safe_close(&px->fd.out);
+	safe_close(&px->fd.pipe[0]);
+	safe_close(&px->fd.pipe[1]);
+	safe_close(&px->fd.prev_read);
 	free_pipex(px);
-	if (errnum == ENOENT)
+	if (errnum == ENOENT || errnum == EFAULT)
 		exit (127);
 	else if (errnum == EACCES)
 		exit (126);

@@ -6,13 +6,14 @@
 /*   By: mdziadko <mdziadko@student.42warsaw.pl>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/30 19:25:38 by mdziadko          #+#    #+#             */
-/*   Updated: 2025/04/14 17:02:43 by mdziadko         ###   ########.fr       */
+/*   Updated: 2025/04/17 16:33:17 by mdziadko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef PIPEX_H
 # define PIPEX_H
 
+# include <string.h>
 # include <stdio.h>
 # include <fcntl.h>
 # include <stdlib.h>
@@ -49,21 +50,24 @@ typedef struct s_pipex
 }			t_pipex;
 
 // PIPEX EXECUTION
-void	run_pipe(t_pipex *px);
-int		execute_pipex(t_pipex *px);
-
-// PIPEX HELPER
 void	run_fst_cmd(t_pipex *px, int i);
 void	run_mid_cmd(t_pipex *px, int i);
 void	run_last_cmd(t_pipex *px, int i);
+void	run_pipe(t_pipex *px);
+int		execute_pipex(t_pipex *px);
+
+// PIPEX UTILS
+t_pipex	*pipex_init(int argc, char **argv, char **envp);
 int		wait_for_children(pid_t last_pid);
+void	safe_close(int *fd);
 
 // PIPEX PARSING
+
 int		find_executable(char **dirs, t_cmd *cmd);
 int		find_path(t_cmd *cmd, char **envp);
 t_cmd	*extract_cmd(char *argv, char **envp);
 t_cmd	**extract_cmds(char **argv, int count, char **envp);
-t_pipex	*parse_args(int argc, char **argv, char **envp);
+int		parse_args(t_pipex *px, int argc, char **argv, char **envp);
 
 // PIPEX CLEANUP
 void	free_cmd(t_cmd *cmd);

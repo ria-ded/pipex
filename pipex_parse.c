@@ -6,7 +6,7 @@
 /*   By: mdziadko <mdziadko@student.42warsaw.pl>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/06 15:31:56 by mdziadko          #+#    #+#             */
-/*   Updated: 2025/04/09 15:32:32 by mdziadko         ###   ########.fr       */
+/*   Updated: 2025/04/17 14:59:48 by mdziadko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,6 @@ int	find_path(t_cmd *cmd, char **envp)
 {
 	int		i;
 	char	**dirs;
-	int		found;
 
 	i = 0;
 	cmd->path = NULL;
@@ -54,13 +53,13 @@ int	find_path(t_cmd *cmd, char **envp)
 			dirs = ft_split(envp[i] + 5, ':');
 			if (!dirs)
 				return (0);
-			found = find_executable(dirs, cmd);
+			find_executable(dirs, cmd);
 			free_arr(dirs);
-			return (found);
+			return (1);
 		}
 		i++;
 	}
-	return (0);
+	return (1);
 }
 
 t_cmd	*extract_cmd(char *argv, char **envp)
@@ -76,11 +75,8 @@ t_cmd	*extract_cmd(char *argv, char **envp)
 		free(cmd);
 		return (NULL);
 	}
-	if (!find_path(cmd, envp))
-	{
-		free_cmd(cmd);
-		return (NULL);
-	}
+	cmd->path = NULL;
+	find_path(cmd, envp);
 	return (cmd);
 }
 
@@ -107,22 +103,14 @@ t_cmd	**extract_cmds(char **argv, int count, char **envp)
 	return (cmds);
 }
 
-t_pipex	*parse_args(int argc, char **argv, char **envp)
+int	parse_args(t_pipex *px, int argc, char **argv, char **envp)
 {
-	t_pipex	*px;
-
-	px = malloc(sizeof(t_pipex));
-	if (!px)
-		return (NULL);
 	px->infile = argv[1];
 	px->outfile = argv[argc - 1];
 	px->cmds_count = argc - 3;
-	px->cmds = extract_cmds(argv, px->cmds_count, envp);
 	px->envp = envp;
+	px->cmds = extract_cmds(argv, px->cmds_count, envp);
 	if (!px->cmds)
-	{
-		free(px);
-		return (NULL);
-	}
-	return (px);
+		return (1);
+	return (0);
 }
