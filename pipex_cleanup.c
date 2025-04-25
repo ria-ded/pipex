@@ -6,7 +6,7 @@
 /*   By: mdziadko <mdziadko@student.42warsaw.pl>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/06 15:31:51 by mdziadko          #+#    #+#             */
-/*   Updated: 2025/04/18 11:36:57 by mdziadko         ###   ########.fr       */
+/*   Updated: 2025/04/25 18:52:14 by mdziadko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,8 @@ void	free_pipex(t_pipex *px)
 		return ;
 	if (px->cmds)
 		free_cmds(px->cmds);
+	if (px->pids)
+		free(px->pids);
 	free(px);
 }
 
@@ -70,7 +72,7 @@ void	err(char *err_text, t_pipex *px, int errnum)
 		write(2, err_text, ft_strlen(err_text));
 		write(2, "\n", 1);
 	}
-	else
+	else if (errnum != 0)
 		perror(err_text);
 	safe_close(&px->fd.in);
 	safe_close(&px->fd.out);
@@ -82,6 +84,8 @@ void	err(char *err_text, t_pipex *px, int errnum)
 		exit (127);
 	else if (errnum == EACCES)
 		exit (126);
+	else if (errnum == 0)
+		exit (0);
 	else
 		exit (1);
 }

@@ -6,7 +6,7 @@
 /*   By: mdziadko <mdziadko@student.42warsaw.pl>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/30 19:25:38 by mdziadko          #+#    #+#             */
-/*   Updated: 2025/04/17 16:33:17 by mdziadko         ###   ########.fr       */
+/*   Updated: 2025/04/25 17:42:10 by mdziadko         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ typedef struct s_pipex
 	int		cmds_count;
 	char	**envp;
 	t_fd	fd;
-	pid_t	last_pid;
+	pid_t	*pids;
 }			t_pipex;
 
 // PIPEX EXECUTION
@@ -59,8 +59,9 @@ int		execute_pipex(t_pipex *px);
 
 // PIPEX UTILS
 t_pipex	*pipex_init(int argc, char **argv, char **envp);
-int		wait_for_children(pid_t last_pid);
+int		wait_for_children(t_pipex *px);
 void	safe_close(int *fd);
+void	safe_dup2(int old_fd, int new_fd, t_pipex *px);
 
 // PIPEX PARSING
 
