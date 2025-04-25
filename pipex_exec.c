@@ -74,6 +74,8 @@ void	run_last_cmd(t_pipex *px, int i)
 		err("fork", px, errno);
 	if (px->pids[i] == 0)
 	{
+		if (px->fd.out == -1)
+			err(px->outfile, px, 1);
 		safe_dup2(px->fd.prev_read, STDIN_FILENO, px);
 		safe_dup2(px->fd.out, STDOUT_FILENO, px);
 		safe_close(&px->fd.prev_read);
@@ -114,8 +116,6 @@ int	execute_pipex(t_pipex *px)
 		px->fd.in = open("/dev/null", O_RDONLY);
 	}
 	px->fd.out = open(px->outfile, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-	if (px->fd.out == -1)
-		err(px->outfile, px, 1);
 	run_pipe(px);
 	if (px->fd.in != -1)
 		close(px->fd.in);
